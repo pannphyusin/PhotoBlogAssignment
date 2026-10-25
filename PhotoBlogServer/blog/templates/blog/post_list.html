@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Blog</title>
+</head>
+<body>
+    <h1>Photo Blog</h1>
+
+    {% for post in posts %}
+        <article>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.text }}</p>
+
+            {% if post.image %}
+                <img src="{{ post.image.url }}"
+                     alt="{{ post.title }}"
+                     style="max-width: 400px;">
+            {% endif %}
+        </article>
+        <hr>
+    {% empty %}
+        <p>No posts available.</p>
+    {% endfor %}
+</body>
+</html>
