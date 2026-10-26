@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
 
     ImageView imageView;
     TextView textView;
-    String site_url = "http://10.0.2.2:8000";
+    String site_url = "https://pannphyusin.pythonanywhere.com";
     JSONObject post_json;
     String imageUrl = null;
     Bitmap bmImg = null;
