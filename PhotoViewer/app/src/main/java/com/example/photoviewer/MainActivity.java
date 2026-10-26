@@ -1,5 +1,6 @@
 package com.example.photoviewer;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
 
     CloadImage taskDownload;
 
+    private static final int PICK_IMAGE_REQUEST = 100;
+    private android.net.Uri selectedImageUri = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,7 +61,57 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickUpload(View v) {
-        // Stub for image upload handler
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("새 포스트 작성");
+
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(this);
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.setPadding(50, 20, 50, 20);
+
+        android.widget.Button btnSelectImage = new android.widget.Button(this);
+        btnSelectImage.setText("갤러리에서 사진 선택");
+        btnSelectImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, PICK_IMAGE_REQUEST);
+            }
+        });
+        layout.addView(btnSelectImage);
+
+        final android.widget.EditText titleInput = new android.widget.EditText(this);
+        titleInput.setHint("제목을 입력하세요");
+        layout.addView(titleInput);
+
+        final android.widget.EditText textInput = new android.widget.EditText(this);
+        textInput.setHint("내용을 입력하세요");
+        layout.addView(textInput);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("업로드", new android.content.DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(android.content.DialogInterface dialog, int which) {
+                String title = titleInput.getText().toString();
+                if (selectedImageUri != null) {
+                    Toast.makeText(getApplicationContext(), "사진 포함 업로드: " + title, Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "사진 없이 업로드: " + title, Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        builder.setNegativeButton("취소", null);
+        builder.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            selectedImageUri = data.getData();
+            Toast.makeText(getApplicationContext(), "사진이 선택되었습니다", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private class CloadImage extends AsyncTask<String, Integer, List<Bitmap>> {
